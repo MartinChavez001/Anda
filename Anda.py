@@ -30,11 +30,15 @@ class Mazo():
                     self.cartas_generadas[idx] = (color, numero)
                     idx += 1
         
-        for color in self.carta.tipo:
+        for color in self.carta.colores:
             for tipo in self.carta.tipo:
-                for _ in range(2):
+                if tipo == self.carta.tipo[3]:
                     self.cartas_generadas[idx] = (color, tipo)
                     idx += 1
+                else:
+                    for _ in range(2):
+                        self.cartas_generadas[idx] = (color, tipo)
+                        idx += 1
         
         self.mazo = list(self.cartas_generadas.items())
         print(f"Cartas generadas: {len(self.mazo)}")
