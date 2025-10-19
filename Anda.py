@@ -1,59 +1,30 @@
-import random
+import time
 
-class Jugador():
-    def __init__(self, Jugador_A = None, Jugador_B = None, Jugador_C = None, Jugador_D = None):
-        self.jugadores = ["A","B","C","D"]
-        self.mazo_jugador = {}
+from Configuraciones import Jugador, Carta, Mazo
+from Configuraciones import clear, texto_lento
 
 
-class Carta():
-    def __init__(self):
-        self.total_cartas = 100
-        self.numero = [1,2,3,4,5,6,7,8,9]
-        self.colores = ["naranja", "violeta", "rosa", "marron"]
-        self.tipo = ["Toma Dos", "Reversa", "Salta", "Toma Cuatro"]
+clear ()
 
-class Mazo():
-    def __init__(self, carta = None):
+print("""
 
-        self.cartas_generadas = {}
-        self.mazo = {}
-        self.carta = carta or Carta()
+    BIEVENIDO A ADNA!
+
+""")
+
+time.sleep(5)
+
+reglas = """
+    Bienvenido a Adna, un juego de carta de 4 jugadores. En este juego cada jugador debera jugar sus cartas
+    hasta quedarse con 1 y gritar "ADNA!", si logra tirar su ultima carta sera el ganador.
     
-    def generacion_mazo (self):
-        idx = 1
-        for color in self.carta.colores:
-            for numero in self.carta.numero:
-                for _ in range(2):
-                    self.cartas_generadas[idx] = (color, numero)
-                    idx += 1
-        
-        for color in self.carta.colores:
-            for tipo in self.carta.tipo:
-                if tipo == self.carta.tipo[3]:
-                    self.cartas_generadas[idx] = (color, tipo)
-                    idx += 1
-                else:
-                    for _ in range(2):
-                        self.cartas_generadas[idx] = (color, tipo)
-                        idx += 1
-        
-        self.mazo = list(self.cartas_generadas.items())
-        
+    Hay 100 cartas, 72 numericas, 28 especiales. Recuerden jugar bien sus cartas.
+"""
+
+texto_lento(reglas, velocidad=0.05)
+
+for _ in range(2):
+    nombreA = input("Ingrese el nombre del jugador A =")
+    nombreB = input("Ingrese el nombre del jugador B =")
     
-    def mezclar(self):
-
-        random.shuffle(self.mazo)
-
-        for item in self.mazo:
-            print(item)
-
-
-m = Mazo()
-m.generacion_mazo()
-m.mezclar()
-
-
-
-
-
+    Jugador.jugadores[nombreA, nombreB] = (idx, nombre)
