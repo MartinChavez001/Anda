@@ -1,7 +1,10 @@
+import random
+
 class Jugador():
-    def __init__(self):
-        self.nombres = []
-        self.mazo_jugador = []
+    def __init__(self, Jugador_A = None, Jugador_B = None, Jugador_C = None, Jugador_D = None):
+        self.jugadores = ["A","B","C","D"]
+        self.mazo_jugador = {}
+
 
 class Carta():
     def __init__(self):
@@ -9,11 +12,6 @@ class Carta():
         self.numero = [1,2,3,4,5,6,7,8,9]
         self.colores = ["naranja", "violeta", "rosa", "marron"]
         self.tipo = ["Toma Dos", "Reversa", "Salta", "Toma Cuatro"]
-        self.cantidad_numericas = 72
-        self.cantidad_tomados = 8
-        self.cantidad_reversa = 8
-        self.cantidad_salta = 8
-        self.cantidad_tomacuatro = 4
 
 class Mazo():
     def __init__(self, carta = None):
@@ -41,14 +39,19 @@ class Mazo():
                         idx += 1
         
         self.mazo = list(self.cartas_generadas.items())
-        print(f"Cartas generadas: {len(self.mazo)}")
+        
+    
+    def mezclar(self):
 
-        for item in self.mazo[:self.carta.total_cartas]:
+        random.shuffle(self.mazo)
+
+        for item in self.mazo:
             print(item)
 
 
 m = Mazo()
 m.generacion_mazo()
+m.mezclar()
 
 
 
