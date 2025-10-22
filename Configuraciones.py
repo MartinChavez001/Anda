@@ -1,14 +1,21 @@
 import random
 import time
 import os
-import threading
 
 def clear():
     os.system('clear' if os.name == 'posix' else 'cls')
 
+def texto_lento(texto, velocidad=0.05):
+    for letra in texto:
+        print(letra, end='', flush=True)
+        time.sleep(velocidad)
+    print()
+
 class Jugador():
-    def __init__(self, Jugador_A = None, Jugador_B = None, Jugador_C = None, Jugador_D = None):
-        self.jugadores = {"A","B","C","D"}
+    def __init__(self):
+        self.jugadorA = {}
+        self.jugadorB = {}
+        self.jugadores = [self.jugadorA, self.jugadorB]
         self.mazo_jugador = {}
 
 
@@ -50,7 +57,7 @@ class Mazo():
     def mezclar(self):
         random.shuffle(self.mazo)
 
-
-
-
-
+    def repatir(jugadores,mazo):
+        for jugador in jugadores:
+            cartas_jugador = random.pop(list(mazo))
+            jugadores["MazoJugador: "] = cartas_jugador            
