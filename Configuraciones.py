@@ -16,7 +16,7 @@ class Jugador():
         self.jugadorA = {}
         self.jugadorB = {}
         self.jugadores = [self.jugadorA, self.jugadorB]
-        self.mazo_jugador = {}
+
 
 
 class Carta():
@@ -51,13 +51,16 @@ class Mazo():
                         self.cartas_generadas[idx] = (color, tipo)
                         idx += 1
         
-        self.mazo = list(self.cartas_generadas.items())
+        self.mazo = list(self.cartas_generadas.values())
         
     
     def mezclar(self):
         random.shuffle(self.mazo)
 
-    def repatir(jugadores,mazo):
+    def repatir(self, jugadores, mazo):
         for jugador in jugadores:
-            cartas_jugador = random.pop(list(mazo))
-            jugadores["MazoJugador: "] = cartas_jugador            
+            jugador["MazoJugador"] = []
+            for i in range(5):
+                carta = random.choice(mazo)
+                jugador["MazoJugador"].append(carta)
+                mazo.remove(carta)
