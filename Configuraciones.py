@@ -17,6 +17,16 @@ class Jugador():
         self.jugadorB = {}
         self.jugadores = [self.jugadorA, self.jugadorB]
 
+    def tirar(jugadores, posicion_turno):
+        if posicion_turno == Jugador.jugadorA:
+            print(f"Jugador {Jugador.jugadorA["Nombre"]} tire una de sus cartas = ")
+            for i in Jugador.jugadorA["MazoJugador"]:
+                print(Jugador.jugadorA["MazoJugador"])
+            carta_seleccionada = str(input())
+            if carta_seleccionada in Jugador.jugadorA["MazoJugador"]:
+                Jugador.jugadorA.remove(carta_seleccionada["MazoJugador"])
+                Mazo.carta_jugador.append(carta_seleccionada)
+
 
 
 class Carta():
@@ -64,3 +74,39 @@ class Mazo():
                 carta = random.choice(mazo)
                 jugador["MazoJugador"].append(carta)
                 mazo.remove(carta)
+
+class Pozo ():
+    def __init__(self, jugadorA, jugadorB):
+        
+        mazo_pozo = {}
+
+        ultima_carta_pozo = list(mazo_pozo.values())[-1]
+        
+        carta_jugador = None 
+
+class Partida ():
+    def __init__(self,jugadores):
+        self.ganador = None
+        self.jugadores = jugadores
+        self.posicion_turno = [Jugador.jugadorA, Jugador.jugadorB]
+
+    def turno (turno):
+        while True:
+            for jugador in turno:
+
+
+
+clear()
+
+for i in range(1):
+    nombreA = input("Ingrese el nombre del jugador A = ")
+    nombreB = input("Ingrese el nombre del jugador B = ")
+    
+    Jugador.jugadorA["Nombre"] = nombreA
+    Jugador.jugadorB["Nombre"] = nombreB
+
+Mazo.generacion_mazo()
+Mazo.mezclar()
+Mazo.repatir(Jugador.jugadores, Mazo.mazo)
+
+print(Jugador.jugadorA, Jugador.jugadorB)
