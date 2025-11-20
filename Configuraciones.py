@@ -11,39 +11,6 @@ def texto_lento(texto, velocidad=0.05):
         time.sleep(velocidad)
     print()
 
-class Jugador():
-    def __init__(self):
-        self.jugadorA = {}
-        self.jugadorB = {}
-        self.jugadores = [self.jugadorA, self.jugadorB]
-
-    def tirar(jugador_actual, mazo_pozo):
-        tirar = False
-        print(f"Jugador {jugador_actual["Nombre"]} tire una de sus cartas = ")
-        cantidad_cartas = len(jugador_actual["MazoJugador"])
-        agarrar = len(jugador_actual["MazoJugador"])
-        for indice, carta in enumerate(jugador_actual["MazoJugador"]):
-            print(f"{indice} : {carta}")
-        print(f"{agarrar} : Tomar carta.")
-        carta_seleccionada = int(input())
-        if carta_seleccionada >= 0 and carta_seleccionada < cantidad_cartas:
-            carta_a_jugar = jugador_actual["MazoJugador"][carta_seleccionada]
-            if pozo.comparacion(carta_a_jugar) == True:
-                jugador_actual["MazoJugador"].pop(carta_seleccionada)
-                mazo_pozo.append(carta_a_jugar)
-                tirar = True
-        elif carta_seleccionada == cantidad_cartas:
-            print("Tomas una carta y pasas turno.")
-            carta_tomada = mazo.mazo.pop()
-            jugador_actual["MazoJugador"].append(carta_tomada)
-            print(carta_tomada)
-            tirar = True
-        else:
-            print("Carta Invalida.")
-        return tirar
-
-
-
 class Carta():
     def __init__(self):
         self.total_cartas = 100
@@ -57,7 +24,6 @@ class Mazo():
         self.cartas_generadas = {}
         self.mazo = []
         self.carta = carta or Carta()
-        self.cantidad_cartas = len(self.mazo)
     
     def generacion_mazo (self):
         idx = 1
@@ -70,11 +36,11 @@ class Mazo():
         for color in self.carta.colores:
             for tipo in self.carta.tipo:
                 if tipo == self.carta.tipo[3]:
-                    self.cartas_generadas[idx] = (color, None ,tipo)
+                    self.cartas_generadas[idx] = (color, tipo)
                     idx += 1
                 else:
                     for _ in range(2):
-                        self.cartas_generadas[idx] = (color, None ,tipo)
+                        self.cartas_generadas[idx] = (color, tipo)
                         idx += 1
         
         self.mazo = list(self.cartas_generadas.values())
@@ -112,60 +78,157 @@ class Pozo ():
             return True
         ultima_carta = self.ultima_carta_pozo()
         
-
         if ultima_carta[0] == carta_a_jugar[0] or ultima_carta[1] == carta_a_jugar[1]:
-            return True
-        
+            if carta_a_jugar[1] == 'Salta':
+                return "Salta"
+            elif carta_a_jugar[1] == 'Reversa':
+                return "Reversa"
+            elif carta_a_jugar[1] == 'Toma Dos':
+                return "Toma Dos"
+            elif carta_a_jugar[1] == 'Toma Cuatro':
+                return "Toma Cuatro"
+            else:
+                return "Siguiente"
+        else:
+            print("Carta erronea (COMPARACION).")
+            return False
+class Jugador():
+    def __init__(self):
+        self.jugadorA = {}
+        self.jugadorB = {}
+        self.jugadores = [self.jugadorA, self.jugadorB]
+        self.compracion = None
 
 
+    def tirar(jugador_actual, mazo_pozo, jugador_siguiente):
+        print("jugador actual " + jugador_actual["Nombre"])
+        print("jugador siguiente " + jugador_siguiente["Nombre"])
+        cartas_en_mazo = mazo.cantidad_cartas() #calcula la cantidad de cartas en el mazo
+        ultima_pozo = pozo.ultima_carta_pozo() #obtiene la ultima carta del pozo
+        print(f"Cartas en el mazo {cartas_en_mazo}") # muestra la cantidad de cartas en el mazo
+        print(f"Pozo: {ultima_pozo}") # muestra la ultima carta del pozo
+        print(f"Jugador {jugador_actual["Nombre"]} tire una de sus cartas = ") #PRESENTACION
+        cantidad_cartas = len(jugador_actual["MazoJugador"]) # CUENTA LA CANTIDAD DE CARTAS DEL JUGADOR
+        agarrar = len(jugador_actual["MazoJugador"]) # AGREGA LA OPCION DE AGARRAR
 
-
+        for indice, carta in enumerate(jugador_actual["MazoJugador"]): #OPCIONES DEL JUGADOR
+            print(f"{indice} : {carta}") # ---
+        print(f"{agarrar} : Tomar carta.") # ---
+        carta_seleccionada = int(input()) # EL JUGADOR ELIGE UNA CARTA
+        if carta_seleccionada >= 0 and carta_seleccionada < cantidad_cartas: # Detecta si la carta esta dentro del mazo del jugador
+            carta_a_jugar = jugador_actual["MazoJugador"][carta_seleccionada] # Guarda la carta seleccionada
+            comparacion = pozo.comparacion(carta_a_jugar)
+            print(f"ESTA ES LA COMPARACION = {comparacion}")
+            if comparacion:
+                jugador_actual["MazoJugador"].pop(carta_seleccionada)
+                mazo_pozo.append(carta_a_jugar)
+                return comparacion
+        elif carta_seleccionada == cantidad_cartas:
+            print("Tomas una carta y pasas turno.")
+            carta_tomada = mazo.mazo.pop()
+            jugador_actual["MazoJugador"].append(carta_tomada)
+            print(carta_tomada)
+            return "Agarrar"
 
 class Partida ():
     def __init__(self):
         self.ganador = None
-
-    def turno (self,jugadores, mazo_obj, pozo_obj):
-        posicion_turno = jugadores
-        idx = 0
-        jugador_actual = posicion_turno[idx]
-        while True:
-            cartas_en_mazo = len(mazo_obj.mazo)
-            ultima_pozo = pozo_obj.ultima_carta_pozo()
-            print(f"Cartas en el mazo {cartas_en_mazo}")
-            print(f"Pozo: {ultima_pozo}")
-            tirar = Jugador.tirar(jugador_actual, pozo_obj.mazo_pozo)
-            
-            if tirar:
-                idx = (idx + 1) % len(posicion_turno)
-                jugador_actual = posicion_turno[idx]
-            else:
-                print("Carta erronea")
-            
-    def prepracion(self, mazo, mazo_pozo):
+        self.idx = 0
+        self. jugador_actual = None
+    
+    def preparacion(self, mazo, mazo_pozo):
         print("Se prepara el juego")
         carta_inicial = mazo.pop(-1)
-        mazo_pozo.append(carta_inicial)
+        if not isinstance(carta_inicial[1], int):
+            print(carta_inicial)
+            print("Carta invalida para comenzar el juego, se buscara otra")
+            mazo.insert(0,carta_inicial) #se cambio append por insert
+            return self.preparacion(mazo, mazo_pozo) # recursividad
+        else:
+            mazo_pozo.append(carta_inicial)
 
-clear()
+
+    def turno (self, idx,jugadores, mazo, pozo):
+        posicion_turno = jugadores
+        jugador_actual = posicion_turno[idx]
+        jugador_siguiente = posicion_turno[(idx + 1) % len(posicion_turno)] # si IDX = 0 : (0 + 1) % 2 = 1, si IDX = 1 : (1 + 1) % 2 = 0
+        
+        
+        tirar = Jugador.tirar(jugador_actual, pozo.mazo_pozo, jugador_siguiente)
+        
+        if tirar == "Toma Cuatro":
+            tomar_cartas = mazo.mazo[-4:]
+            del mazo.mazo[-4:]
+            jugador_siguiente["MazoJugador"].extend(tomar_cartas)
+            self.idx = (idx + 2) % len(posicion_turno)
+
+
+####################VERIFICAR QUIEN ES JUGADOR SIGUIENTE Y POR QUE EL TOMA 2 NO PONE LAS CARTAS EN
+        elif tirar == "Toma Dos":
+            tomar_cartas = mazo.mazo[-2:]
+            del mazo.mazo[-2:]
+            jugador_siguiente["MazoJugador"].extend(tomar_cartas)
+            self.idx = (idx + 2) % len(posicion_turno)
+
+        elif tirar == "Salta":
+            self.idx = (idx + 2) % len(posicion_turno)
+            jugador_actual = posicion_turno[idx]
+            self.jugador_actual = jugador_actual
+            
+
+        elif tirar == "Reversa":
+            idx = (idx - 1) % len(posicion_turno)
+            jugador_actual = posicion_turno[idx]
+            self.jugador_actual = jugador_actual
+            
+        elif tirar == "Siguiente":
+            self.idx = (idx + 1) % len(posicion_turno)
+            jugador_actual = posicion_turno[idx]
+            self.jugador_actual = jugador_actual
+        
+        elif tirar == "Agarrar":
+            self.idx = (idx + 1) % len(posicion_turno)
+            jugador_actual = posicion_turno[idx]
+            self.jugador_actual = jugador_actual
+            
+        else:
+            return Jugador.tirar(jugador_actual, pozo.mazo_pozo, jugador_siguiente) #recursividad
+
+    
+    def inicio(self):
+        clear()
+        nombreA = input("Ingrese el nombre del jugador A = ")
+        nombreB = input("Ingrese el nombre del jugador B = ")
+
+        jugador.jugadorA["Nombre"] = nombreA
+        jugador.jugadorB["Nombre"] = nombreB
+
+    def ronda(self):
+        clear()
+        Partida.inicio(self)
+        mazo.generacion_mazo()
+        mazo.mezclar()
+        mazo.repatir(jugador.jugadores, mazo.mazo)
+        partida.preparacion(mazo.mazo, pozo.mazo_pozo)
+        self.jugador_actual = jugador.jugadores[self.idx]
+
+        ganador = False
+        while ganador != True:
+            
+            self.turno(self.idx,jugador.jugadores, mazo, pozo)
+            
+            jugador_actual = partida.jugador_actual
+            if not jugador_actual["MazoJugador"]:
+                print(f"Jugador {jugador_actual} es el ganador.")
+                ganador = True
+
 
 jugador = Jugador()
 mazo = Mazo()
 partida = Partida()
 pozo = Pozo()
 
-# Introduccion nombres de jugadores
 
-nombreA = input("Ingrese el nombre del jugador A = ")
-nombreB = input("Ingrese el nombre del jugador B = ")
+partida.ronda()
 
-jugador.jugadorA["Nombre"] = nombreA
-jugador.jugadorB["Nombre"] = nombreB
 
-#---------------------------------------------------------
-
-mazo.generacion_mazo()
-mazo.mezclar()
-mazo.repatir(jugador.jugadores, mazo.mazo)
-partida.prepracion(mazo.mazo, pozo.mazo_pozo)
-partida.turno(jugador.jugadores, mazo, pozo)
