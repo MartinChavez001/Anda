@@ -2,7 +2,7 @@ import random
 import time
 import os
 
-# COSAS POR HACER: 1) BOTS 2) Decir Adna 3) Mazo Vacio (reciclar mazo) 5) Estrategia bots
+# COSAS POR HACER: 1) BOTS 2) Decir Adna 4) Estrategia bots
 
 
 def clear():
@@ -66,7 +66,6 @@ class Mazo():
     def cantidad_cartas(self):
         cartas_en_mazo =  len(mazo.mazo)
         return cartas_en_mazo
-
 class Pozo ():
     def __init__(self):
         self.mazo_pozo = []
@@ -104,27 +103,33 @@ class Jugador():
 
 
     def tirar(jugador_actual, mazo_pozo, jugador_siguiente, cartas_a_agarrar):
+        cartas_en_mazo = mazo.cantidad_cartas()
+        
+        if cartas_en_mazo <= 0:
+            print("Ya no hay cartas en el mazo. Reciclando...")
+            mazo.mazo.extend(pozo.mazo_pozo)
+            pozo.mazo_pozo.clear()
+            partida.preparacion(mazo.mazo, pozo.mazo_pozo)
+        
+        ultima_pozo = pozo.ultima_carta_pozo()
         print("jugador actual " + jugador_actual["Nombre"])
         print("jugador siguiente " + jugador_siguiente["Nombre"])
-        cartas_en_mazo = mazo.cantidad_cartas()
-        ultima_pozo = pozo.ultima_carta_pozo()
         print(f"Cartas en el mazo {cartas_en_mazo}")
         print(f"Pozo: {ultima_pozo}")
         print(f"Jugador {jugador_actual['Nombre']} tire una de sus cartas = ")
     
         cantidad_cartas = len(jugador_actual["MazoJugador"])
-        agarrar = len(jugador_actual["MazoJugador"])
+        agarrar = len(jugador_actual["MazoJugador"]) + 1
     
         for indice, carta in enumerate(jugador_actual["MazoJugador"]):
-            print(f"{indice} : {carta}")
+            print(f"{indice + 1} : {carta}")
     
-
         if cartas_a_agarrar > 0:
             print(f"{agarrar} : Tomar {cartas_a_agarrar} cartas.")
         else:
             print(f"{agarrar} : Tomar carta.")
     
-        carta_seleccionada = int(input())
+        carta_seleccionada = int(input()) - 1
     
 
         if carta_seleccionada == cantidad_cartas:
@@ -162,6 +167,16 @@ class Jugador():
                 if comparacion:
                     jugador_actual["MazoJugador"].pop(carta_seleccionada)
                     mazo_pozo.append(carta_a_jugar)
+
+                    if len(jugador_actual["MazoJugador"]) == 1:
+                        print(f"{jugador_actual['Nombre']}, te queda 1 carta.")
+                        print("Vas a decir 'Adna'? (s/n)")
+                        respuesta = input().lower()
+                        if respuesta != 's':
+                            print("No dijiste 'Adna' tomas 2 cartas.")
+                            penalizacion = mazo.mazo[-2:]
+                            del mazo.mazo[-2:]
+                            jugador_actual["MazoJugador"].extend(penalizacion)
                     return comparacion
                 else:
                     return Jugador.tirar(jugador_actual, mazo_pozo, jugador_siguiente, cartas_a_agarrar)
@@ -180,7 +195,7 @@ class Partida ():
         self.carta_pasada = 0
     
     def preparacion(self, mazo, mazo_pozo):
-        print("Se prepara el juego")
+        
         carta_inicial = mazo.pop(-1)
         if not isinstance(carta_inicial[1], int):
             print(carta_inicial)
@@ -257,6 +272,7 @@ class Partida ():
         mazo.mezclar()
         mazo.repatir(jugador.jugadores, mazo.mazo)
         partida.preparacion(mazo.mazo, pozo.mazo_pozo)
+        print("Se prepara el juego")
         self.jugador_actual = jugador.jugadores[self.idx]
 
         ganador = False
@@ -266,7 +282,7 @@ class Partida ():
             
             jugador_actual = partida.jugador_actual
             if not jugador_actual["MazoJugador"]:
-                print(f"Jugador {jugador_actual} es el ganador.")
+                print(f"Jugador {jugador_actual['Nombre']} es el ganador.")
                 ganador = True
 
 
