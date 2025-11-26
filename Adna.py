@@ -101,7 +101,7 @@ class Pozo ():
             print("Carta erronea.") # Si ninguna condicion se dio, devuelve error 
             return False
 
-class Jugador():
+class Jugador():    
     def __init__(self):
         self.jugadorA = {"Bot": False, "Adna": False} # Establece a cada jugador, definiendo si es un bot o no
         self.jugadorB = {"Bot": True, "Adna": False} # Asi como tambien si dijo Adna o no
@@ -384,7 +384,7 @@ class Partida ():
         clear()
         print("""
 
-                BIEVENIDO A ADNA!
+                BIENVENIDO A ADNA!
 
         """)
 
