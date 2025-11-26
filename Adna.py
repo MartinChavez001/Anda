@@ -18,9 +18,9 @@ def texto_lento(texto, velocidad=0.05, end ='\n'):
 # Clase jugador
 class Carta():
     def __init__(self): 
-        self.numero = [1,2,3,4,5,6,7,8,9] # Establace los numeros de cartas a usar
-        self.colores = ["naranja", "violeta", "rosa", "marron"] # Establece los colores a usar
-        self.tipo = ["Toma Dos", "Reversa", "Salta", "Toma Cuatro"] # Establece los tipos de cartas a usar
+        self.numero = [1,2,3,4,5,6,7,8,9]
+        self.colores = ["naranja", "violeta", "rosa", "marron"]
+        self.tipo = ["Toma Dos", "Reversa", "Salta", "Toma Cuatro"]
 
 class Mazo():
     def __init__(self):
@@ -167,16 +167,16 @@ class Jugador():
                 return self.tirar(jugador_actual, mazo_pozo, jugador_siguiente, cartas_a_agarrar)
             else:
                 clear()
-                time.sleep(3)
                 texto_lento(f"No podes decir 'Adna' con {cantidad_cartas} cartas. Solo cuando tenes 2.", velocidad=0.05)
+                time.sleep(3)
                 return self.tirar(jugador_actual, mazo_pozo, jugador_siguiente, cartas_a_agarrar)
         
         # Tomar cartas
         if carta_seleccionada == cantidad_cartas:
-            if cartas_a_agarrar > 0:
+            if cartas_a_agarrar > 0:  # Verifica si el jugador tiene que agarrar cartas previas
                 clear()
                 texto_lento(f"Tomas {cartas_a_agarrar} cartas y pasas turno.", velocidad=0.05)
-                tomar_cartas = mazo.mazo[-cartas_a_agarrar:]
+                tomar_cartas = mazo.mazo[-cartas_a_agarrar:] #mazo.mazo[-1]
                 del mazo.mazo[-cartas_a_agarrar:]
                 jugador_actual["MazoJugador"].extend(tomar_cartas)
                 jugador_actual["Adna"] = False
@@ -195,7 +195,7 @@ class Jugador():
             carta_a_jugar = jugador_actual["MazoJugador"][carta_seleccionada]
             comparacion = pozo.comparacion(carta_a_jugar)
             
-            if cartas_a_agarrar > 0:
+            if cartas_a_agarrar > 0: #Verifica si el jugador tiene que tirar un +2 o +4 para responder
                 if comparacion in ['Toma Dos', 'Toma Cuatro']:
                     jugador_actual["MazoJugador"].pop(carta_seleccionada)
                     mazo_pozo.append(carta_a_jugar)
@@ -283,7 +283,7 @@ class Jugador():
                 cartas_validas.append((indice, carta))
         
         if not cartas_validas:
-            return cantidad_cartas
+            return cantidad_cartas #agarrar
         
         if cartas_a_agarrar > 0:
             for indice, carta in cartas_validas:
@@ -300,11 +300,6 @@ class Jugador():
             if carta[1] in ['Reversa', 'Salta']:
                 return indice
         
-        cartas_numericas = [(i, c) for i, c in cartas_validas if isinstance(c[1], int)]
-        if cartas_numericas:
-            carta_elegida = max(cartas_numericas, key=lambda x: x[1][1])
-            return carta_elegida[0]
-        
         return cartas_validas[0][0]
 
 class Partida ():
@@ -313,7 +308,6 @@ class Partida ():
         self.idx = 0
         self.jugador_actual = None
         self.cartas_a_agarrar = 0
-        self.carta_pasada = 0
         self.sentido = 1
     
     def preparacion(self, mazo, mazo_pozo):
@@ -333,7 +327,7 @@ class Partida ():
     def turno (self, idx,jugadores, mazo, pozo):
         posicion_turno = jugadores
         jugador_actual = posicion_turno[idx]
-        jugador_siguiente = posicion_turno[(idx + 1) % len(posicion_turno)] # si IDX = 0 : (0 + 1) % 2 = 1, si IDX = 1 : (1 + 1) % 2 = 0
+        jugador_siguiente = posicion_turno[(idx + 1) % len(posicion_turno)] # si IDX = 0 : (0 + 1) % 4 = 1, si IDX = 1 : (1 + 1) % 4 = 2, si IDX = 2 : (2+1) % 4 = 3, si IDX = 3 : (3+1) % 4 = 0
         
         tirar_resultado = jugador.tirar(jugador_actual, pozo.mazo_pozo, jugador_siguiente, self.cartas_a_agarrar)
         
@@ -344,7 +338,6 @@ class Partida ():
             return True
         
         if tirar_resultado == "Toma Cuatro":
-            carta_pasada = 4
             self.cartas_a_agarrar += 4
             self.idx = (idx + self.sentido) % len(posicion_turno)
             jugador_actual = posicion_turno[self.idx]
@@ -352,7 +345,6 @@ class Partida ():
             
         elif tirar_resultado == "Toma Dos":
             self.cartas_a_agarrar += 2
-            carta_pasada = 2
             self.idx = (idx + self.sentido) % len(posicion_turno)
             jugador_actual = posicion_turno[self.idx]
             self.jugador_actual = jugador_actual
